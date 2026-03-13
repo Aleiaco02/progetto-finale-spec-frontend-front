@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
     const [products, setProducts] = useState([]);
@@ -12,6 +13,7 @@ function HomePage() {
     const [error, setError] = useState("");
 
     const debounceRef = useRef(null);
+    const navigate = useNavigate();
 
     // debounce ricerca
     useEffect(() => {
@@ -80,60 +82,91 @@ function HomePage() {
     }
 
     return (
-        <main>
-            <h1>Smartphone Comparator</h1>
+        <main className="home-page">
 
-            <div className="controls">
-                <input
-                    type="text"
-                    placeholder="Cerca smartphone..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                />
+            <div className="home-layout">
 
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                >
-                    <option value="all">Tutte le categorie</option>
-                    <option value="standard">Standard</option>
-                    <option value="plus">Plus</option>
-                    <option value="pro">Pro</option>
-                    <option value="pro-max">Pro Max</option>
-                    <option value="air">Air</option>
-                    <option value="ultra">Ultra</option>
-                </select>
+                <aside className="filters-sidebar">
+                    <h2>Filtri</h2>
 
-                <select
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                >
-                    <option value="title-asc">Titolo A-Z</option>
-                    <option value="title-desc">Titolo Z-A</option>
-                    <option value="category-asc">Categoria A-Z</option>
-                    <option value="category-desc">Categoria Z-A</option>
-                </select>
+                    <div className="filter-group">
+                        <label>Cerca</label>
+                        <input
+                            type="text"
+                            placeholder="Cerca smartphone..."
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="filter-group">
+                        <label>Categoria</label>
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            <option value="all">Tutte</option>
+                            <option value="standard">Standard</option>
+                            <option value="plus">Plus</option>
+                            <option value="pro">Pro</option>
+                            <option value="pro-max">Pro Max</option>
+                            <option value="air">Air</option>
+                            <option value="ultra">Ultra</option>
+                        </select>
+                    </div>
+
+                    <div className="filter-group">
+                        <label>Ordina</label>
+                        <select
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                        >
+                            <option value="title-asc">Titolo A-Z</option>
+                            <option value="title-desc">Titolo Z-A</option>
+                            <option value="category-asc">Categoria A-Z</option>
+                            <option value="category-desc">Categoria Z-A</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <section className="products-section">
+
+                    {sortedProducts.length === 0 ? (
+                        <p>Nessuno smartphone trovato</p>
+                    ) : (
+                        <div className="products-container">
+
+                            {sortedProducts.map((product) => (
+                                <article
+                                    key={product.id}
+                                    className="product-card"
+                                    onClick={() => navigate(`/products/${product.id}`)}
+                                >
+
+                                    <h2>{product.title}</h2>
+
+                                    <p>Categoria: {product.category.charAt(0).toUpperCase() + product.category.slice(1)}</p>
+
+
+                                    <button
+                                        className="product-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/products/${product.id}`);
+                                        }}
+                                    >
+                                        Vedi prodotto
+                                    </button>
+
+                                </article>
+                            ))}
+
+                        </div>
+                    )}
+
+                </section>
+
             </div>
-
-            {sortedProducts.length === 0 ? (
-                <p>Nessuno smartphone trovato</p>
-            ) : (
-                <div className="products-grid">
-                    {sortedProducts.map((product) => (
-                        <article key={product.id} className="product-card">
-
-                            <h2>{product.title}</h2>
-
-                            <p>Categoria: {product.category}</p>
-
-                            <Link to={`/products/${product.id}`}>
-                                Vai al dettaglio
-                            </Link>
-
-                        </article>
-                    ))}
-                </div>
-            )}
         </main>
     );
 }
