@@ -9,7 +9,7 @@ function FavoritesPage() {
 
     return (
         <main>
-            <h1>I tuoi preferiti</h1>
+            <h1 className="favorites-title">I tuoi preferiti</h1>
 
             {favorites.length === 0 ? (
                 <p>Non hai ancora aggiunto prodotti ai preferiti.</p>

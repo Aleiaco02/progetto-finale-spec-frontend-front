@@ -6,15 +6,19 @@ function Header() {
 
     return (
         <header className="site-header">
-            <Link to="/" className="logo">
-                Smartphone Comparator
-            </Link>
+            <div className="header-container">
 
-            <nav>
-                <Link to="/favorites" className="favorites-button">
-                    Preferiti ({favorites.length})
+                <Link to="/" className="logo">
+                    Smart Compare
                 </Link>
-            </nav>
+
+                <nav>
+                    <Link to="/favorites" className="favorites-button">
+                        Preferiti ({favorites.length})
+                    </Link>
+                </nav>
+
+            </div>
         </header>
     );
 }
