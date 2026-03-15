@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useFavorites } from "../context/FavoritesContext";
+import CircularText from './CircularText';
 
 function Header() {
     const { favorites } = useFavorites();
@@ -9,7 +10,12 @@ function Header() {
             <div className="header-container">
 
                 <Link to="/" className="logo">
-                    Smart Compare
+                    <CircularText
+                        text=" Smart Compare"
+                        onHover="speedUp"
+                        spinDuration={10}
+                        className="custom-class"
+                    />
                 </Link>
 
                 <nav>
