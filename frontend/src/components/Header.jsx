@@ -18,7 +18,12 @@ function Header() {
                     />
                 </Link>
 
-                <nav>
+
+                <nav className="header-actions">
+                    <Link to="/compare" className="favorites-button">
+                        Compara
+                    </Link>
+
                     <Link to="/favorites" className="favorites-button">
                         Preferiti ({favorites.length})
                     </Link>

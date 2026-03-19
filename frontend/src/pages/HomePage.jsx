@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getProducts } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
+
 function HomePage() {
     const [products, setProducts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
