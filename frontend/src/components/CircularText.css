@@ -7,6 +7,7 @@
     font-weight: bold;
     color: #000000;
     font-weight: 900;
+    font-family: "Kumbh Sans", sans-serif;
     text-align: center;
     cursor: pointer;
     transform-origin: 50% 50%;
@@ -20,6 +21,6 @@
     right: 0;
     top: 0;
     bottom: 0;
-    font-size: 24px;
+    font-size: 34px;
     transition: all 0.5s cubic-bezier(0, 0, 0, 1);
 }

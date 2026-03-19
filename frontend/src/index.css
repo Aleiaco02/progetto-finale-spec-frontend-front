@@ -2,6 +2,10 @@
    RESET E STILI GLOBALI
    ========================= */
 
+* {
+    font-family: "Kumbh Sans", sans-serif;
+}
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;

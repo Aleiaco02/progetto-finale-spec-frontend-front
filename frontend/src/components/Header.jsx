@@ -11,7 +11,7 @@ function Header() {
 
                 <Link to="/" className="logo">
                     <CircularText
-                        text=" Smart Compare"
+                        text="Smart*Compare*"
                         onHover="speedUp"
                         spinDuration={10}
                         className="custom-class"
