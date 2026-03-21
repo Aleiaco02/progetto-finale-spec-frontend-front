@@ -105,8 +105,6 @@ function DetailPage() {
 
 
     // selezione del prodotto da confrontare
-    // qui facciamo una chiamata singola con l'id perché ci servono tutti i dati completi:
-    // immagine, prezzo, ram, batteria, descrizione ecc.
     async function handleSelectCompareProduct(compareId) {
         try {
             setCompareError("");
@@ -226,6 +224,7 @@ function DetailPage() {
                                             Seleziona un modello
                                         </option>
 
+                                        {/* Per ogni prodotto confrontabile creo un’opzione. */}
                                         {compareableProducts.map((item) => (
                                             <option
                                                 key={item.id}
