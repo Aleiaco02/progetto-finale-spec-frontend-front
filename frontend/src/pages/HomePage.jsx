@@ -3,7 +3,6 @@ import { getProducts } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function HomePage() {
-    // stati principali
     const [products, setProducts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
     const [category, setCategory] = useState("all");
@@ -11,45 +10,49 @@ function HomePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const navigate = useNavigate(); // navigazione tra pagine
+    const navigate = useNavigate();
 
-    // fetch prodotti con debounce su searchInput
     useEffect(() => {
+        async function fetchProducts() {
+            try {
+                setError("");
+
+                const params = {};
+
+                if (searchInput.trim()) {
+                    params.search = searchInput.trim();
+                }
+
+                if (category !== "all") {
+                    params.category = category;
+                }
+
+                const data = await getProducts(params);
+                setProducts(data);
+            } catch {
+                setError("Errore nel caricamento smartphone");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // primo caricamento immediato
+        if (!searchInput.trim()) {
+            fetchProducts();
+            return;
+        }
+
+        // debounce solo quando c'è testo scritto
         const timeoutId = setTimeout(() => {
             console.log("FETCH DOPO DEBOUNCE:", searchInput);
-
-            async function fetchProducts() {
-                try {
-                    setError("");
-
-                    const params = {};
-
-                    if (searchInput.trim()) {
-                        params.search = searchInput.trim();
-                    }
-
-                    if (category !== "all") {
-                        params.category = category;
-                    }
-
-                    const data = await getProducts(params);
-                    setProducts(data);
-                } catch {
-                    setError("Errore nel caricamento smartphone");
-                } finally {
-                    setLoading(false);
-                }
-            }
-
             fetchProducts();
         }, 500);
 
         return () => clearTimeout(timeoutId);
     }, [searchInput, category]);
 
-    // ordinamento locale dei prodotti
     const sortedProducts = useMemo(() => {
-        const result = [...products]; // copia per non mutare lo stato
+        const result = [...products];
 
         if (sort === "title-asc") {
             result.sort((a, b) => a.title.localeCompare(b.title));
@@ -64,7 +67,6 @@ function HomePage() {
         return result;
     }, [products, sort]);
 
-    // gestione loading ed errori
     if (loading) {
         return <h1>Caricamento smartphone...</h1>;
     }
@@ -76,12 +78,9 @@ function HomePage() {
     return (
         <main className="home-page">
             <div className="home-layout">
-
-                {/* sidebar filtri */}
                 <aside className="filters-sidebar">
                     <h2>Filtri</h2>
 
-                    {/* input ricerca */}
                     <div className="filter-group">
                         <label>Cerca</label>
                         <input
@@ -92,7 +91,6 @@ function HomePage() {
                         />
                     </div>
 
-                    {/* filtro categoria */}
                     <div className="filter-group">
                         <label>Categoria</label>
                         <select
@@ -109,7 +107,6 @@ function HomePage() {
                         </select>
                     </div>
 
-                    {/* ordinamento */}
                     <div className="filter-group">
                         <label>Ordina</label>
                         <select
@@ -124,7 +121,6 @@ function HomePage() {
                     </div>
                 </aside>
 
-                {/* lista prodotti */}
                 <section className="products-section">
                     {sortedProducts.length === 0 ? (
                         <p>Nessuno smartphone trovato</p>
@@ -158,7 +154,6 @@ function HomePage() {
                         </div>
                     )}
                 </section>
-
             </div>
         </main>
     );
