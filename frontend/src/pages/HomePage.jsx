@@ -1,78 +1,70 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getProducts } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
-
 function HomePage() {
+    // stati principali
     const [products, setProducts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
-    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [category, setCategory] = useState("all");
     const [sort, setSort] = useState("title-asc");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const debounceRef = useRef(null);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // navigazione tra pagine
 
-    // debounce ricerca
+    // fetch prodotti con debounce su searchInput
     useEffect(() => {
-        debounceRef.current = setTimeout(() => {
-            setDebouncedSearch(searchInput);
-        }, 400);
+        const timeoutId = setTimeout(() => {
+            console.log("FETCH DOPO DEBOUNCE:", searchInput);
 
-        return () => clearTimeout(debounceRef.current);
-    }, [searchInput]);
+            async function fetchProducts() {
+                try {
+                    setError("");
 
-    // fetch prodotti
-    useEffect(() => {
-        async function fetchProducts() {
-            try {
-                setError("");
+                    const params = {};
 
-                const params = {};
+                    if (searchInput.trim()) {
+                        params.search = searchInput.trim();
+                    }
 
-                if (debouncedSearch.trim()) {
-                    params.search = debouncedSearch.trim();
+                    if (category !== "all") {
+                        params.category = category;
+                    }
+
+                    const data = await getProducts(params);
+                    setProducts(data);
+                } catch {
+                    setError("Errore nel caricamento smartphone");
+                } finally {
+                    setLoading(false);
                 }
-
-                if (category !== "all") {
-                    params.category = category;
-                }
-
-                const data = await getProducts(params);
-                setProducts(data);
-            } catch {
-                setError("Errore nel caricamento smartphone");
-            } finally {
-                setLoading(false);
             }
-        }
 
-        fetchProducts();
-    }, [debouncedSearch, category]);
+            fetchProducts();
+        }, 500);
 
-    // ordinamento prodotti
+        return () => clearTimeout(timeoutId);
+    }, [searchInput, category]);
+
+    // ordinamento locale dei prodotti
     const sortedProducts = useMemo(() => {
-        const result = [...products];
+        const result = [...products]; // copia per non mutare lo stato
 
         if (sort === "title-asc") {
             result.sort((a, b) => a.title.localeCompare(b.title));
-
         } else if (sort === "title-desc") {
             result.sort((a, b) => b.title.localeCompare(a.title));
-
         } else if (sort === "category-asc") {
             result.sort((a, b) => a.category.localeCompare(b.category));
-
         } else if (sort === "category-desc") {
             result.sort((a, b) => b.category.localeCompare(a.category));
         }
 
         return result;
-
     }, [products, sort]);
 
+    // gestione loading ed errori
     if (loading) {
         return <h1>Caricamento smartphone...</h1>;
     }
@@ -83,12 +75,13 @@ function HomePage() {
 
     return (
         <main className="home-page">
-
             <div className="home-layout">
 
+                {/* sidebar filtri */}
                 <aside className="filters-sidebar">
                     <h2>Filtri</h2>
 
+                    {/* input ricerca */}
                     <div className="filter-group">
                         <label>Cerca</label>
                         <input
@@ -99,6 +92,7 @@ function HomePage() {
                         />
                     </div>
 
+                    {/* filtro categoria */}
                     <div className="filter-group">
                         <label>Categoria</label>
                         <select
@@ -115,6 +109,7 @@ function HomePage() {
                         </select>
                     </div>
 
+                    {/* ordinamento */}
                     <div className="filter-group">
                         <label>Ordina</label>
                         <select
@@ -129,24 +124,25 @@ function HomePage() {
                     </div>
                 </aside>
 
+                {/* lista prodotti */}
                 <section className="products-section">
-
                     {sortedProducts.length === 0 ? (
                         <p>Nessuno smartphone trovato</p>
                     ) : (
                         <div className="products-container">
-
                             {sortedProducts.map((product) => (
                                 <article
                                     key={product.id}
                                     className="product-card"
                                     onClick={() => navigate(`/products/${product.id}`)}
                                 >
-
                                     <h2>{product.title}</h2>
 
-                                    <p>Categoria: {product.category.charAt(0).toUpperCase() + product.category.slice(1)}</p>
-
+                                    <p>
+                                        Categoria:{" "}
+                                        {product.category.charAt(0).toUpperCase() +
+                                            product.category.slice(1)}
+                                    </p>
 
                                     <button
                                         className="product-button"
@@ -157,13 +153,10 @@ function HomePage() {
                                     >
                                         Vedi prodotto
                                     </button>
-
                                 </article>
                             ))}
-
                         </div>
                     )}
-
                 </section>
 
             </div>

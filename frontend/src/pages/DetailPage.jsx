@@ -117,12 +117,6 @@ function DetailPage() {
                 return;
             }
 
-            if (String(compareId) === String(product?.id)) {
-                setCompareError("Non puoi confrontare lo stesso telefono.");
-                setSelectedCompareProduct(null);
-                return;
-            }
-
             const data = await getProduct(compareId);
             setSelectedCompareProduct(data.product);
         } catch {
