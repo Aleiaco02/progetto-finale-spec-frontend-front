@@ -51,6 +51,7 @@ function HomePage() {
         return () => clearTimeout(timeoutId);
     }, [searchInput, category]);
 
+    //ordinamento prodotti
     const sortedProducts = useMemo(() => {
         const result = [...products];
 
