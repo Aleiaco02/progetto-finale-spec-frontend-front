@@ -3,12 +3,14 @@ import { useFavorites } from "../context/FavoritesContext";
 import CircularText from './CircularText';
 
 function Header() {
+    // prendo lista preferiti dal context
     const { favorites } = useFavorites();
 
     return (
         <header className="site-header">
             <div className="header-container">
 
+                {/* logo → torna alla home */}
                 <Link to="/" className="logo">
                     <CircularText
                         text="Smart*Compare*"
@@ -20,13 +22,17 @@ function Header() {
 
 
                 <nav className="header-actions">
+
+                    {/* pagina comparatore */}
                     <Link to="/compare" className="favorites-button">
                         Compara
                     </Link>
 
+                    {/* pagina preferiti con contatore */}
                     <Link to="/favorites" className="favorites-button">
                         Preferiti ({favorites.length})
                     </Link>
+
                 </nav>
 
             </div>

@@ -3,6 +3,7 @@ import { getProducts, getProduct } from "../services/api";
 import './comparePage.css'
 
 function ComparePage() {
+    // stati principali
     const [allProducts, setAllProducts] = useState([]);
     const [firstCompareId, setFirstCompareId] = useState("");
     const [secondCompareId, setSecondCompareId] = useState("");
@@ -11,6 +12,7 @@ function ComparePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // carico tutti i prodotti all'avvio
     useEffect(() => {
         async function fetchProducts() {
             try {
@@ -27,6 +29,7 @@ function ComparePage() {
         fetchProducts();
     }, []);
 
+    // gestisco selezione primo prodotto
     async function handleFirstChange(productId) {
         setFirstCompareId(productId);
 
@@ -43,6 +46,7 @@ function ComparePage() {
         }
     }
 
+    // gestisco selezione secondo prodotto
     async function handleSecondChange(productId) {
         setSecondCompareId(productId);
 
@@ -59,10 +63,12 @@ function ComparePage() {
         }
     }
 
+    // stato loading
     if (loading) {
         return <h1>Caricamento comparatore...</h1>;
     }
 
+    // stato errore
     if (error) {
         return <h1>{error}</h1>;
     }
@@ -72,6 +78,7 @@ function ComparePage() {
             <h1>Compara smartphone</h1>
 
             <div className="compare-top-section">
+                {/* select primo telefono */}
                 <div className="compare-select-box">
                     <label htmlFor="first-phone">Primo smartphone</label>
                     <select
@@ -88,6 +95,7 @@ function ComparePage() {
                     </select>
                 </div>
 
+                {/* select secondo telefono */}
                 <div className="compare-select-box">
                     <label htmlFor="second-phone">Secondo smartphone</label>
                     <select
@@ -109,12 +117,16 @@ function ComparePage() {
                 </div>
             </div>
 
+            {/* mostro confronto solo se entrambi selezionati */}
             {firstProduct && secondProduct ? (
                 <div className="compare-products-page">
+
+                    {/* card primo prodotto */}
                     <div className="compare-page-card">
                         <img src={firstProduct.image} alt={firstProduct.title} />
                         <h2>{firstProduct.title}</h2>
 
+                        {/* specifiche */}
                         <div className="compare-spec-row">
                             <span>Brand</span>
                             <span>{firstProduct.brand}</span>
@@ -158,16 +170,19 @@ function ComparePage() {
                             <span>{firstProduct.camera}</span>
                         </div>
 
+                        {/* descrizione */}
                         <div className="compare-description-box">
                             <h3>Descrizione</h3>
                             <p>{firstProduct.description}</p>
                         </div>
                     </div>
 
+                    {/* card secondo prodotto */}
                     <div className="compare-page-card">
                         <img src={secondProduct.image} alt={secondProduct.title} />
                         <h2>{secondProduct.title}</h2>
 
+                        {/* specifiche */}
                         <div className="compare-spec-row">
                             <span>Brand</span>
                             <span>{secondProduct.brand}</span>
@@ -218,6 +233,8 @@ function ComparePage() {
                     </div>
                 </div>
             ) : (
+
+                // messaggio se non selezionati entrambi
                 <p className="compare-empty-text">
                     Seleziona due smartphone per confrontarli.
                 </p>

@@ -36,13 +36,10 @@ function DetailPage() {
     // funzioni del context per i preferiti
     const { toggleFavorite, isFavorite } = useFavorites();
 
-
-
     // stati principali del prodotto mostrato nella pagina
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
 
     // stati usati per la parte di confronto
     const [allProducts, setAllProducts] = useState([]);
@@ -51,7 +48,6 @@ function DetailPage() {
     const [isCompareSelectorOpen, setIsCompareSelectorOpen] = useState(false);
     const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
     const [compareError, setCompareError] = useState("");
-
 
 
     // caricamento del prodotto principale quando cambia l'id
@@ -75,9 +71,7 @@ function DetailPage() {
     }, [id]);
 
 
-
-    // caricamento di tutti i prodotti per la select del confronto
-    // qui il backend restituisce solo dati parziali, quindi usiamo questa lista solo per scegliere il prodotto
+    // caricamento di tutti i prodotti per la select del confronto perche backend restituisce solo dati parziali
     useEffect(() => {
         async function fetchAllProducts() {
             try {
@@ -92,16 +86,12 @@ function DetailPage() {
     }, []);
 
 
-
-
-    // lista dei prodotti selezionabili nel confronto
-    // escludiamo il prodotto attuale dalla select
+    // lista dei prodotti selezionabili nel confronto escludendo il prodotto gia presente nella select
     const compareableProducts = useMemo(() => {
         return allProducts.filter(
             (item) => String(item.id) !== String(product?.id)
         );
     }, [allProducts, product]);
-
 
 
     // selezione del prodotto da confrontare
@@ -124,14 +114,12 @@ function DetailPage() {
     }
 
 
-
     // reset del prodotto scelto per il confronto
     function handleRemoveSelectedCompare() {
         setSelectedCompareId("");
         setSelectedCompareProduct(null);
         setCompareError("");
     }
-
 
 
     // apertura della modale di confronto
@@ -146,20 +134,16 @@ function DetailPage() {
     }
 
 
-
     // gestione loading, error e prodotto non trovato
     if (loading) return <h1>Caricamento...</h1>;
     if (error) return <h1>{error}</h1>;
     if (!product) return <h1>Prodotto non trovato</h1>;
 
 
-
     // controllo se il prodotto corrente è già nei preferiti
     const favorite = isFavorite(product.id);
 
 
-
-    // render principale della pagina
     return (
         <>
             <main className="detail-page">

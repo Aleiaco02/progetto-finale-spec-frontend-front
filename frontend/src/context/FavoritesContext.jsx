@@ -20,7 +20,7 @@ export function FavoritesProvider({ children }) {
         localStorage.setItem("favorites", JSON.stringify(favorites));
     }, [favorites]);
 
-    // aggiunge un prodotto ai preferiti (senza duplicati)
+    // aggiungo un prodotto ai preferiti senza duplicati
     function addFavorite(product) {
         setFavorites((prev) => {
             const alreadyExists = prev.some((item) => item.id === product.id);
@@ -33,14 +33,14 @@ export function FavoritesProvider({ children }) {
         });
     }
 
-    // rimuove un prodotto dai preferiti
+    // rimuovo un prodotto dai preferiti
     function removeFavorite(productId) {
         setFavorites((prev) =>
             prev.filter((item) => item.id !== productId)
         );
     }
 
-    // aggiunge o rimuove automaticamente
+    // aggiungo o rimuovo automaticamente
     function toggleFavorite(product) {
         const alreadyExists = favorites.some(
             (item) => item.id === product.id
@@ -53,7 +53,7 @@ export function FavoritesProvider({ children }) {
         }
     }
 
-    // controlla se un prodotto è nei preferiti
+    // controllo se un prodotto è nei preferiti
     function isFavorite(productId) {
         return favorites.some((item) => item.id === productId);
     }

@@ -3,6 +3,8 @@ import { getProducts } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function HomePage() {
+
+    // stati principali
     const [products, setProducts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
     const [category, setCategory] = useState("all");
@@ -10,8 +12,10 @@ function HomePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // navigazione programmatica verso dettaglio prodotto
     const navigate = useNavigate();
 
+    //primo useEffect
     useEffect(() => {
         async function fetchProducts() {
             try {
@@ -51,6 +55,7 @@ function HomePage() {
         return () => clearTimeout(timeoutId);
     }, [searchInput, category]);
 
+
     //ordinamento prodotti
     const sortedProducts = useMemo(() => {
         const result = [...products];
@@ -68,10 +73,14 @@ function HomePage() {
         return result;
     }, [products, sort]);
 
+
+    // stato caricamento
     if (loading) {
         return <h1>Caricamento smartphone...</h1>;
     }
 
+
+    // stato errore
     if (error) {
         return <h1>{error}</h1>;
     }
@@ -123,6 +132,8 @@ function HomePage() {
                 </aside>
 
                 <section className="products-section">
+
+                    {/* se non ci sono risultati */}
                     {sortedProducts.length === 0 ? (
                         <p>Nessuno smartphone trovato</p>
                     ) : (
@@ -131,6 +142,7 @@ function HomePage() {
                                 <article
                                     key={product.id}
                                     className="product-card"
+                                    // click sulla card → vai al dettaglio
                                     onClick={() => navigate(`/products/${product.id}`)}
                                 >
                                     <h2>{product.title}</h2>
@@ -144,7 +156,7 @@ function HomePage() {
                                     <button
                                         className="product-button"
                                         onClick={(e) => {
-                                            e.stopPropagation();
+                                            e.stopPropagation(); // evita il click anche sulla card
                                             navigate(`/products/${product.id}`);
                                         }}
                                     >
