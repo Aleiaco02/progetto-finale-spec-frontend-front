@@ -1,95 +1,104 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { getProducts } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { toSlug } from "../utils/slug";
+import { useFavorites } from "../context/FavoritesContext";
+import { useToast } from "../context/ToastContext";
 
 function HomePage() {
 
-    // stati principali
     const [products, setProducts] = useState([]);
     const [searchInput, setSearchInput] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const debounceRef = useRef(null);
     const [category, setCategory] = useState("all");
     const [sort, setSort] = useState("title-asc");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // navigazione programmatica verso dettaglio prodotto
     const navigate = useNavigate();
+    const { toggleFavorite, isFavorite } = useFavorites();
+    const { showToast } = useToast();
 
-    //primo useEffect
+    useEffect(() => {
+        debounceRef.current = setTimeout(() => setDebouncedSearch(searchInput), 400);
+        return () => clearTimeout(debounceRef.current);
+    }, [searchInput]);
+
     useEffect(() => {
         async function fetchProducts() {
             try {
                 setError("");
-
                 const params = {};
-
-                if (searchInput.trim()) {
-                    params.search = searchInput.trim();
-                }
-
-                if (category !== "all") {
-                    params.category = category;
-                }
-
+                if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
+                if (category !== "all") params.category = category;
                 const data = await getProducts(params);
                 setProducts(data);
             } catch {
-                setError("Errore nel caricamento smartphone");
+                setError("Errore nel caricamento degli smartphone");
             } finally {
                 setLoading(false);
             }
         }
+        fetchProducts();
+    }, [debouncedSearch, category]);
 
-        // primo caricamento immediato
-        if (!searchInput.trim()) {
-            fetchProducts();
-            return;
-        }
-
-        // debounce solo quando c'è testo scritto
-        const timeoutId = setTimeout(() => {
-            console.log("FETCH DOPO DEBOUNCE:", searchInput);
-            fetchProducts();
-        }, 500);
-
-        return () => clearTimeout(timeoutId);
-    }, [searchInput, category]);
-
-
-    //ordinamento prodotti
     const sortedProducts = useMemo(() => {
-        const result = [...products];
+        let result = [...products];
 
-        if (sort === "title-asc") {
-            result.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (sort === "title-desc") {
-            result.sort((a, b) => b.title.localeCompare(a.title));
-        } else if (sort === "category-asc") {
-            result.sort((a, b) => a.category.localeCompare(b.category));
-        } else if (sort === "category-desc") {
-            result.sort((a, b) => b.category.localeCompare(a.category));
-        }
+        if (sort === "title-asc")          result.sort((a, b) => a.title.localeCompare(b.title));
+        else if (sort === "title-desc")    result.sort((a, b) => b.title.localeCompare(a.title));
+        else if (sort === "price-asc")     result.sort((a, b) => a.price - b.price);
+        else if (sort === "price-desc")    result.sort((a, b) => b.price - a.price);
+        else if (sort === "category-asc")  result.sort((a, b) => a.category.localeCompare(b.category));
+        else if (sort === "category-desc") result.sort((a, b) => b.category.localeCompare(a.category));
 
         return result;
     }, [products, sort]);
 
-
-    // stato caricamento
-    if (loading) {
-        return <h1>Caricamento smartphone...</h1>;
+    function resetFilters() {
+        setSearchInput("");
+        setCategory("all");
+        setSort("title-asc");
     }
 
+    if (loading) {
+        return (
+            <main>
+                <div className="loading-state">
+                    <div className="loading-spinner" />
+                    <p>Caricamento smartphone...</p>
+                </div>
+            </main>
+        );
+    }
 
-    // stato errore
     if (error) {
-        return <h1>{error}</h1>;
+        return <main><div className="error-state">{error}</div></main>;
     }
 
     return (
-        <main className="home-page">
+        <main>
+            <div className="home-hero">
+                <h1>Confronta i migliori <span>smartphone</span>.</h1>
+                <p>Filtra per categoria, salva i preferiti e confronta le specifiche fianco a fianco.</p>
+            </div>
+
+            <div className="home-compare-banner">
+                <div>
+                    <h2>Compara i tuoi smartphone preferiti</h2>
+                    <p>Scegli due dispositivi e confronta le specifiche tecniche fianco a fianco.</p>
+                </div>
+                <Link to="/compare">Inizia il confronto →</Link>
+            </div>
+
             <div className="home-layout">
                 <aside className="filters-sidebar">
-                    <h2>Filtri</h2>
+                    <div className="filters-sidebar-header">
+                        <h2>Filtri</h2>
+                        <button className="filters-reset-btn" onClick={resetFilters}>Reset</button>
+                    </div>
 
                     <div className="filter-group">
                         <label>Cerca</label>
@@ -97,16 +106,13 @@ function HomePage() {
                             type="text"
                             placeholder="Cerca smartphone..."
                             value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
+                            onChange={e => setSearchInput(e.target.value)}
                         />
                     </div>
 
                     <div className="filter-group">
                         <label>Categoria</label>
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
+                        <select value={category} onChange={e => setCategory(e.target.value)}>
                             <option value="all">Tutte</option>
                             <option value="standard">Standard</option>
                             <option value="plus">Plus</option>
@@ -118,50 +124,80 @@ function HomePage() {
                     </div>
 
                     <div className="filter-group">
-                        <label>Ordina</label>
-                        <select
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                        >
-                            <option value="title-asc">Titolo A-Z</option>
-                            <option value="title-desc">Titolo Z-A</option>
-                            <option value="category-asc">Categoria A-Z</option>
-                            <option value="category-desc">Categoria Z-A</option>
+                        <label>Ordina per</label>
+                        <select value={sort} onChange={e => setSort(e.target.value)}>
+                            <option value="title-asc">Titolo A–Z</option>
+                            <option value="title-desc">Titolo Z–A</option>
+                            <option value="price-asc">Prezzo ↑</option>
+                            <option value="price-desc">Prezzo ↓</option>
+                            <option value="category-asc">Categoria A–Z</option>
+                            <option value="category-desc">Categoria Z–A</option>
                         </select>
                     </div>
                 </aside>
 
                 <section className="products-section">
+                    <div className="products-section-header">
+                        <span className="products-count">
+                            {sortedProducts.length === 0 ? "Nessun risultato" : `${sortedProducts.length} smartphone`}
+                        </span>
+                    </div>
 
-                    {/* se non ci sono risultati */}
                     {sortedProducts.length === 0 ? (
-                        <p>Nessuno smartphone trovato</p>
+                        <div className="empty-state">
+                            <div className="empty-state-icon">◻</div>
+                            <p>Nessuno smartphone trovato per i filtri selezionati.</p>
+                            <button className="product-button" onClick={resetFilters} style={{ width: "auto", marginTop: "8px" }}>
+                                Rimuovi filtri
+                            </button>
+                        </div>
                     ) : (
                         <div className="products-container">
                             {sortedProducts.map((product) => (
                                 <article
                                     key={product.id}
                                     className="product-card"
-                                    // click sulla card → vai al dettaglio
-                                    onClick={() => navigate(`/products/${product.id}`)}
+                                    onClick={() => navigate(`/products/${toSlug(product.title)}`)}
                                 >
-                                    <h2>{product.title}</h2>
+                                    <div className="product-card-image">
+                                        {product.image && (
+                                            <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
+                                        )}
+                                        <button
+                                            className={`card-favorite-btn ${isFavorite(product.id) ? "active" : ""}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const alreadySaved = isFavorite(product.id);
+                                                toggleFavorite(product);
+                                                showToast(alreadySaved ? "Rimosso dai preferiti" : "Aggiunto ai preferiti ✓", alreadySaved ? "error" : "success");
+                                            }}
+                                            title={isFavorite(product.id) ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+                                        >
+                                            {isFavorite(product.id) ? "★" : "☆"}
+                                        </button>
+                                    </div>
 
-                                    <p>
-                                        Categoria:{" "}
-                                        {product.category.charAt(0).toUpperCase() +
-                                            product.category.slice(1)}
-                                    </p>
+                                    <div className="product-card-body">
+                                        <span className={`product-category-badge badge-${product.category}`}>
+                                            {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                        </span>
 
-                                    <button
-                                        className="product-button"
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // evita il click anche sulla card
-                                            navigate(`/products/${product.id}`);
-                                        }}
-                                    >
-                                        Vedi prodotto
-                                    </button>
+                                        <h2>{product.title}</h2>
+
+                                        {product.price && (
+                                            <span className="product-card-price">{product.price} $</span>
+                                        )}
+
+                                        <button
+                                            className="product-button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/products/${toSlug(product.title)}`);
+                                            }}
+                                        >
+                                            Scopri →
+                                        </button>
+                                    </div>
                                 </article>
                             ))}
                         </div>

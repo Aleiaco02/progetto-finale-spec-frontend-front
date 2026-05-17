@@ -1,38 +1,25 @@
 import { Link } from "react-router-dom";
 import { useFavorites } from "../context/FavoritesContext";
-import CircularText from './CircularText';
 
 function Header() {
-    // prendo lista preferiti dal context
     const { favorites } = useFavorites();
 
     return (
         <header className="site-header">
             <div className="header-container">
 
-                {/* logo → torna alla home */}
                 <Link to="/" className="logo">
-                    <CircularText
-                        text="Smart*Compare*"
-                        onHover="speedUp"
-                        spinDuration={10}
-                        className="custom-class"
-                    />
+                    Smart<span>Compare</span>
                 </Link>
 
-
-                <nav className="header-actions">
-
-                    {/* pagina comparatore */}
+                <nav style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <Link to="/compare" className="favorites-button">
-                        Compara
+                        Confronta
                     </Link>
-
-                    {/* pagina preferiti con contatore */}
                     <Link to="/favorites" className="favorites-button">
-                        Preferiti ({favorites.length})
+                        Preferiti
+                        <span className="favorites-badge">{favorites.length}</span>
                     </Link>
-
                 </nav>
 
             </div>

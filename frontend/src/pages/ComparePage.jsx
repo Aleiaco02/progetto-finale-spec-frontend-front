@@ -1,244 +1,184 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getProducts, getProduct } from "../services/api";
-import './comparePage.css'
+
+const SPECS = [
+    { label: "Brand",    key: "brand" },
+    { label: "Categoria", key: "category" },
+    { label: "Prezzo",   key: "price",      fmt: v => `${v} $` },
+    { label: "Storage",  key: "storage",    fmt: v => `${v} GB` },
+    { label: "RAM",      key: "ram",        fmt: v => `${v} GB` },
+    { label: "Batteria", key: "battery",    fmt: v => `${v} mAh` },
+    { label: "Schermo",  key: "screenSize", fmt: v => `${v}"` },
+    { label: "Camera",   key: "camera" },
+];
+
+function CompareSlot({ label, allProducts, otherId, product, onSelect, onClear }) {
+    return (
+        <div className="cp-slot">
+            <div className="cp-slot-header">
+                <span className="cp-slot-label">{label}</span>
+                {product && (
+                    <button className="cp-slot-clear" onClick={onClear}>×</button>
+                )}
+            </div>
+
+            <select
+                className="cp-slot-select"
+                value={product?.id ?? ""}
+                onChange={e => onSelect(e.target.value)}
+            >
+                <option value="">Seleziona uno smartphone</option>
+                {allProducts
+                    .filter(p => String(p.id) !== String(otherId))
+                    .map(p => (
+                        <option key={p.id} value={p.id}>{p.title}</option>
+                    ))
+                }
+            </select>
+
+            {product ? (
+                <div className="cp-slot-preview">
+                    <div className="cp-slot-img">
+                        <img src={product.image} alt={product.title} />
+                    </div>
+                    <div className="cp-slot-name">
+                        <span className={`product-category-badge badge-${product.category}`}>
+                            {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                        </span>
+                        <h3>{product.title}</h3>
+                    </div>
+                </div>
+            ) : (
+                <div className="cp-slot-empty">
+                    <div className="cp-slot-empty-icon">+</div>
+                    <p>Nessun dispositivo selezionato</p>
+                </div>
+            )}
+        </div>
+    );
+}
 
 function ComparePage() {
-    // stati principali
     const [allProducts, setAllProducts] = useState([]);
-    const [firstCompareId, setFirstCompareId] = useState("");
-    const [secondCompareId, setSecondCompareId] = useState("");
-    const [firstProduct, setFirstProduct] = useState(null);
-    const [secondProduct, setSecondProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
-    // carico tutti i prodotti all'avvio
+    const [productA, setProductA] = useState(null);
+    const [productB, setProductB] = useState(null);
+
     useEffect(() => {
-        async function fetchProducts() {
+        async function fetchAll() {
             try {
-                setError("");
                 const data = await getProducts();
                 setAllProducts(data);
-            } catch {
-                setError("Errore nel caricamento prodotti");
             } finally {
                 setLoading(false);
             }
         }
-
-        fetchProducts();
+        fetchAll();
     }, []);
 
-    // gestisco selezione primo prodotto
-    async function handleFirstChange(productId) {
-        setFirstCompareId(productId);
-
-        if (!productId) {
-            setFirstProduct(null);
-            return;
-        }
-
-        try {
-            const data = await getProduct(productId);
-            setFirstProduct(data.product);
-        } catch {
-            setError("Errore nel caricamento del primo prodotto");
-        }
+    async function handleSelectA(id) {
+        if (!id) { setProductA(null); return; }
+        const data = await getProduct(id);
+        setProductA(data.product);
     }
 
-    // gestisco selezione secondo prodotto
-    async function handleSecondChange(productId) {
-        setSecondCompareId(productId);
-
-        if (!productId) {
-            setSecondProduct(null);
-            return;
-        }
-
-        try {
-            const data = await getProduct(productId);
-            setSecondProduct(data.product);
-        } catch {
-            setError("Errore nel caricamento del secondo prodotto");
-        }
+    async function handleSelectB(id) {
+        if (!id) { setProductB(null); return; }
+        const data = await getProduct(id);
+        setProductB(data.product);
     }
 
-    // stato loading
     if (loading) {
-        return <h1>Caricamento comparatore...</h1>;
+        return (
+            <main>
+                <div className="loading-state">
+                    <div className="loading-spinner" />
+                    <p>Caricamento...</p>
+                </div>
+            </main>
+        );
     }
 
-    // stato errore
-    if (error) {
-        return <h1>{error}</h1>;
-    }
+    const bothSelected = productA && productB;
 
     return (
         <main className="compare-page">
-            <h1>Compara smartphone</h1>
 
-            <div className="compare-top-section">
-                {/* select primo telefono */}
-                <div className="compare-select-box">
-                    <label htmlFor="first-phone">Primo smartphone</label>
-                    <select
-                        id="first-phone"
-                        value={firstCompareId}
-                        onChange={(e) => handleFirstChange(e.target.value)}
-                    >
-                        <option value="">Seleziona il primo telefono</option>
-                        {allProducts.map((product) => (
-                            <option key={product.id} value={product.id}>
-                                {product.title}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            <Link to="/" className="detail-back">← Home</Link>
 
-                {/* select secondo telefono */}
-                <div className="compare-select-box">
-                    <label htmlFor="second-phone">Secondo smartphone</label>
-                    <select
-                        id="second-phone"
-                        value={secondCompareId}
-                        onChange={(e) => handleSecondChange(e.target.value)}
-                    >
-                        <option value="">Seleziona il secondo telefono</option>
-                        {allProducts.map((product) => (
-                            <option
-                                key={product.id}
-                                value={product.id}
-                                disabled={String(product.id) === String(firstCompareId)}
-                            >
-                                {product.title}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            <div className="cp-hero">
+                <h1>Compara i tuoi <span>smartphone</span> preferiti</h1>
+                <p>Seleziona due dispositivi e confronta le specifiche tecniche fianco a fianco.</p>
             </div>
 
-            {/* mostro confronto solo se entrambi selezionati */}
-            {firstProduct && secondProduct ? (
-                <div className="compare-products-page">
+            <div className="cp-selectors">
+                <CompareSlot
+                    label="Dispositivo A"
+                    allProducts={allProducts}
+                    otherId={productB?.id}
+                    product={productA}
+                    onSelect={handleSelectA}
+                    onClear={() => setProductA(null)}
+                />
 
-                    {/* card primo prodotto */}
-                    <div className="compare-page-card">
-                        <img src={firstProduct.image} alt={firstProduct.title} />
-                        <h2>{firstProduct.title}</h2>
+                <div className="cp-vs">
+                    <span>VS</span>
+                </div>
 
-                        {/* specifiche */}
-                        <div className="compare-spec-row">
-                            <span>Brand</span>
-                            <span>{firstProduct.brand}</span>
+                <CompareSlot
+                    label="Dispositivo B"
+                    allProducts={allProducts}
+                    otherId={productA?.id}
+                    product={productB}
+                    onSelect={handleSelectB}
+                    onClear={() => setProductB(null)}
+                />
+            </div>
+
+            {bothSelected && (
+                <div className="cp-table">
+                    <div className="cp-table-header">
+                        <div className="cp-table-spec-col" />
+                        <div className="cp-table-val-col">
+                            <img src={productA.image} alt={productA.title} />
+                            <strong>{productA.title}</strong>
                         </div>
-
-                        <div className="compare-spec-row">
-                            <span>Categoria</span>
-                            <span>
-                                {firstProduct.category.charAt(0).toUpperCase() +
-                                    firstProduct.category.slice(1)}
-                            </span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Prezzo</span>
-                            <span>{firstProduct.price} $</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Storage</span>
-                            <span>{firstProduct.storage} GB</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>RAM</span>
-                            <span>{firstProduct.ram} GB</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Batteria</span>
-                            <span>{firstProduct.battery} mAh</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Schermo</span>
-                            <span>{firstProduct.screenSize}"</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Camera</span>
-                            <span>{firstProduct.camera}</span>
-                        </div>
-
-                        {/* descrizione */}
-                        <div className="compare-description-box">
-                            <h3>Descrizione</h3>
-                            <p>{firstProduct.description}</p>
+                        <div className="cp-table-val-col">
+                            <img src={productB.image} alt={productB.title} />
+                            <strong>{productB.title}</strong>
                         </div>
                     </div>
 
-                    {/* card secondo prodotto */}
-                    <div className="compare-page-card">
-                        <img src={secondProduct.image} alt={secondProduct.title} />
-                        <h2>{secondProduct.title}</h2>
+                    {SPECS.map(({ label, key, fmt }) => {
+                        const valA = fmt ? fmt(productA[key]) : productA[key];
+                        const valB = fmt ? fmt(productB[key]) : productB[key];
+                        return (
+                            <div className="cp-table-row" key={key}>
+                                <div className="cp-table-spec-col">{label}</div>
+                                <div className="cp-table-val-col">{valA}</div>
+                                <div className="cp-table-val-col">{valB}</div>
+                            </div>
+                        );
+                    })}
 
-                        {/* specifiche */}
-                        <div className="compare-spec-row">
-                            <span>Brand</span>
-                            <span>{secondProduct.brand}</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Categoria</span>
-                            <span>
-                                {secondProduct.category.charAt(0).toUpperCase() +
-                                    secondProduct.category.slice(1)}
-                            </span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Prezzo</span>
-                            <span>{secondProduct.price} $</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Storage</span>
-                            <span>{secondProduct.storage} GB</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>RAM</span>
-                            <span>{secondProduct.ram} GB</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Batteria</span>
-                            <span>{secondProduct.battery} mAh</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Schermo</span>
-                            <span>{secondProduct.screenSize}"</span>
-                        </div>
-
-                        <div className="compare-spec-row">
-                            <span>Camera</span>
-                            <span>{secondProduct.camera}</span>
-                        </div>
-
-                        <div className="compare-description-box">
-                            <h3>Descrizione</h3>
-                            <p>{secondProduct.description}</p>
-                        </div>
+                    <div className="cp-table-row cp-description-row">
+                        <div className="cp-table-spec-col">Descrizione</div>
+                        <div className="cp-table-val-col cp-description">{productA.description}</div>
+                        <div className="cp-table-val-col cp-description">{productB.description}</div>
                     </div>
                 </div>
-            ) : (
-
-                // messaggio se non selezionati entrambi
-                <p className="compare-empty-text">
-                    Seleziona due smartphone per confrontarli.
-                </p>
             )}
+
+            {!bothSelected && (
+                <div className="cp-hint">
+                    {!productA && !productB
+                        ? "Seleziona due smartphone per iniziare il confronto."
+                        : "Seleziona il secondo smartphone per vedere il confronto."}
+                </div>
+            )}
+
         </main>
     );
 }

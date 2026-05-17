@@ -1,71 +1,78 @@
+import { Link } from "react-router-dom";
 import { useFavorites } from "../context/FavoritesContext";
+import { useToast } from "../context/ToastContext";
 import { useNavigate } from "react-router-dom";
+import { toSlug } from "../utils/slug";
 
 function FavoritesPage() {
-
-    // prendo preferiti e funzione per rimuoverli dal context
     const { favorites, removeFavorite } = useFavorites();
-
-    // per navigazione programmatica
+    const { showToast } = useToast();
     const navigate = useNavigate();
 
     return (
         <main>
-            <h1 className="favorites-title">I tuoi preferiti</h1>
+            <div className="favorites-header">
+                <h1>Preferiti</h1>
+                <p>
+                    {favorites.length > 0
+                        ? `${favorites.length} smartphone ${favorites.length === 1 ? "salvato" : "salvati"}`
+                        : "La tua lista è vuota"}
+                </p>
+            </div>
 
-            {/* se non ci sono preferiti */}
             {favorites.length === 0 ? (
-                <p>Non hai ancora aggiunto prodotti ai preferiti.</p>
+                <div className="empty-state">
+                    <div className="empty-state-icon">♡</div>
+                    <p>Non hai ancora salvato nessuno smartphone.<br />Esplora il catalogo e aggiungi i tuoi preferiti.</p>
+                    <Link to="/" className="product-button">
+                        Esplora il catalogo
+                    </Link>
+                </div>
             ) : (
                 <div className="products-grid">
-
-                    {/* ciclo su tutti i prodotti preferiti */}
                     {favorites.map((product) => (
-
                         <article
                             key={product.id}
                             className="product-card favorite-card"
-                            onClick={() => navigate(`/products/${product.id}`)}
+                            onClick={() => navigate(`/products/${toSlug(product.title)}`)}
                         >
-
-                            {/* bottone rimuovi preferito */}
                             <button
                                 className="remove-favorite-btn"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeFavorite(product.id);
+                                    showToast("Rimosso dai preferiti", "error");
                                 }}
                                 aria-label={`Rimuovi ${product.title} dai preferiti`}
                             >
                                 ×
                             </button>
 
-                            {/* immagine prodotto */}
-                            <img src={product.image} alt={product.title} />
+                            <div className="product-card-image">
+                                {product.image && (
+                                    <img src={product.image} alt={product.title} loading="lazy" decoding="async" />
+                                )}
+                            </div>
 
-                            {/* titolo */}
-                            <h2>{product.title}</h2>
+                            <div className="product-card-body">
+                                <span className={`product-category-badge badge-${product.category}`}>
+                                    {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                </span>
 
-                            {/* categoria formattata */}
-                            <p>
-                                Categoria: {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-                            </p>
+                                <h2>{product.title}</h2>
 
-                            {/* bottone dettaglio */}
-                            <button
-                                className="product-button"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/products/${product.id}`);
-                                }}
-                            >
-                                Vai al dettaglio
-                            </button>
-
+                                <button
+                                    className="product-button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/products/${toSlug(product.title)}`);
+                                    }}
+                                >
+                                    Vai al dettaglio →
+                                </button>
+                            </div>
                         </article>
-
                     ))}
-
                 </div>
             )}
         </main>
