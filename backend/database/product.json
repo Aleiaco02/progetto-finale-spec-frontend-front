@@ -11,7 +11,7 @@
         "screenSize": 6.1,
         "camera": "48 MP",
         "description": "iPhone 15 con chip A16 Bionic e porta USB-C.",
-        "image": "/images/iphone-15.jpg"
+        "image": "/images/iphone-15\.webp"
     },
     {
         "id": 2,
@@ -25,7 +25,7 @@
         "screenSize": 6.7,
         "camera": "48 MP",
         "description": "Versione Plus con display più grande e batteria maggiore.",
-        "image": "/images/iphone-15-plus.jpg"
+        "image": "/images/iphone-15-plus\.webp"
     },
     {
         "id": 3,
@@ -39,7 +39,7 @@
         "screenSize": 6.1,
         "camera": "48 MP",
         "description": "Modello Pro con chip A17 Pro e telaio in titanio.",
-        "image": "/images/iphone-15-pro.jpg"
+        "image": "/images/iphone-15-pro\.webp"
     },
     {
         "id": 4,
@@ -53,7 +53,7 @@
         "screenSize": 6.7,
         "camera": "48 MP",
         "description": "Top di gamma della serie 15 con zoom ottico avanzato.",
-        "image": "/images/iphone-15-pro-max.jpg"
+        "image": "/images/iphone-15-pro-max\.webp"
     },
     {
         "id": 5,
@@ -67,7 +67,7 @@
         "screenSize": 6.1,
         "camera": "48 MP",
         "description": "iPhone 16 con chip A18 e miglioramenti fotografici.",
-        "image": "/images/iphone-16.jpg"
+        "image": "/images/iphone-16\.webp"
     },
     {
         "id": 6,
@@ -81,7 +81,7 @@
         "screenSize": 6.7,
         "camera": "48 MP",
         "description": "Versione Plus della serie 16 con maggiore autonomia.",
-        "image": "/images/iphone-16-plus.jpg"
+        "image": "/images/iphone-16-plus\.webp"
     },
     {
         "id": 7,
@@ -95,7 +95,7 @@
         "screenSize": 6.3,
         "camera": "48 MP",
         "description": "iPhone 16 Pro con display più grande e chip A18 Pro.",
-        "image": "/images/iphone-16-pro.jpg"
+        "image": "/images/iphone-16-pro\.webp"
     },
     {
         "id": 8,
@@ -109,7 +109,7 @@
         "screenSize": 6.9,
         "camera": "48 MP",
         "description": "Versione più potente della serie 16.",
-        "image": "/images/iphone-16-pro-max.jpg"
+        "image": "/images/iphone-16-pro-max\.webp"
     },
     {
         "id": 9,
@@ -123,7 +123,7 @@
         "screenSize": 6.3,
         "camera": "48 MP",
         "description": "Nuova generazione iPhone con chip A19.",
-        "image": "/images/iphone-17.jpg"
+        "image": "/images/iphone-17\.webp"
     },
     {
         "id": 10,
@@ -137,7 +137,7 @@
         "screenSize": 6.5,
         "camera": "48 MP",
         "description": "iPhone ultrasottile della linea 17.",
-        "image": "/images/iphone-17-air.jpg"
+        "image": "/images/iphone-17-air\.webp"
     },
     {
         "id": 11,
@@ -151,7 +151,7 @@
         "screenSize": 6.3,
         "camera": "48 MP",
         "description": "Versione Pro con prestazioni migliorate.",
-        "image": "/images/iphone-17-pro.jpg"
+        "image": "/images/iphone-17-pro\.webp"
     },
     {
         "id": 12,
@@ -165,7 +165,7 @@
         "screenSize": 6.9,
         "camera": "48 MP",
         "description": "Top di gamma della serie 17.",
-        "image": "/images/iphone-17-pro-max.jpg"
+        "image": "/images/iphone-17-pro-max\.webp"
     },
     {
         "id": 13,
@@ -179,7 +179,7 @@
         "screenSize": 6.2,
         "camera": "50 MP",
         "description": "Galaxy S24 con display AMOLED 120Hz.",
-        "image": "/images/s24.jpg"
+        "image": "/images/s24\.webp"
     },
     {
         "id": 14,
@@ -193,7 +193,7 @@
         "screenSize": 6.7,
         "camera": "50 MP",
         "description": "Versione Plus con display QHD+.",
-        "image": "/images/s24-plus.jpg"
+        "image": "/images/s24-plus\.webp"
     },
     {
         "id": 15,
@@ -207,7 +207,7 @@
         "screenSize": 6.8,
         "camera": "200 MP",
         "description": "Top di gamma con S Pen e camera 200 MP.",
-        "image": "/images/s24-ultra.jpg"
+        "image": "/images/s24-ultra\.webp"
     },
     {
         "id": 16,
@@ -221,7 +221,7 @@
         "screenSize": 6.2,
         "camera": "50 MP",
         "description": "Galaxy S25 con Snapdragon di nuova generazione.",
-        "image": "/images/s25.jpg"
+        "image": "/images/s25\.webp"
     },
     {
         "id": 17,
@@ -235,7 +235,7 @@
         "screenSize": 6.7,
         "camera": "50 MP",
         "description": "Versione Plus con batteria più grande.",
-        "image": "/images/s25-plus.jpg"
+        "image": "/images/s25-plus\.webp"
     },
     {
         "id": 18,
@@ -249,7 +249,7 @@
         "screenSize": 6.9,
         "camera": "200 MP",
         "description": "Top di gamma Samsung con S Pen.",
-        "image": "/images/s25-ultra.jpg"
+        "image": "/images/s25-ultra\.webp"
     },
     {
         "id": 19,
@@ -263,7 +263,7 @@
         "screenSize": 6.3,
         "camera": "50 MP",
         "description": "Galaxy S26 con miglioramenti AI e display AMOLED.",
-        "image": "/images/s26.jpg"
+        "image": "/images/s26\.webp"
     },
     {
         "id": 20,
@@ -277,7 +277,7 @@
         "screenSize": 6.7,
         "camera": "50 MP",
         "description": "Versione Plus con maggiore autonomia.",
-        "image": "/images/s26-plus.jpg"
+        "image": "/images/s26-plus\.webp"
     },
     {
         "id": 21,
@@ -291,6 +291,6 @@
         "screenSize": 6.9,
         "camera": "200 MP",
         "description": "Top di gamma Samsung della serie S26.",
-        "image": "/images/s26-ultra.jpg"
+        "image": "/images/s26-ultra\.webp"
     }
 ]
